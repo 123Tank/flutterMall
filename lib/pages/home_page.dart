@@ -3,6 +3,7 @@ import '../service/service_method.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'dart:convert';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
@@ -23,7 +24,10 @@ class _HomePageState extends State<HomePage> {
               List<Map> swiperDataList =
                   (data['data']['slides'] as List).cast(); // 顶部轮播组件数
               List<Map> navigatorList = (data['data']['category'] as List).cast(); // 导航组件
-              String  advertesPicture = (data['data']['advertesPicture']['PICTURE_ADDRESS']);
+              String  advertesPicture = (data['data']['advertesPicture']['PICTURE_ADDRESS']); // 广告模块
+              String  leaderImage= data['data']['shopInfo']['leaderImage'];  //店长图片
+              String  leaderPhone = data['data']['shopInfo']['leaderPhone']; //店长电话 
+
               if(navigatorList.length>10){
                 navigatorList.removeRange(10, navigatorList.length);
               }
@@ -32,6 +36,7 @@ class _HomePageState extends State<HomePage> {
                   SwiperDiy(swiperDataList: swiperDataList),
                   TopNavigator(navigatorList: navigatorList),
                   AdBanner(advertesPicture: advertesPicture),
+                  LeaderPhone(leaderImage:leaderImage,leaderPhone: leaderPhone)  //广告组件  
                 ],
               );
             } else {
@@ -44,6 +49,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+// 轮播组件
 class SwiperDiy extends StatelessWidget {
   final List swiperDataList;
   SwiperDiy({Key key, this.swiperDataList}) : super(key: key);
@@ -66,6 +72,7 @@ class SwiperDiy extends StatelessWidget {
   }
 }
 
+// 导航组件
 class TopNavigator extends StatelessWidget {
   final List navigatorList;
 
@@ -98,7 +105,7 @@ class TopNavigator extends StatelessWidget {
   }
 }
 
-
+// 广告组件
 class AdBanner extends StatelessWidget {
   final String advertesPicture;
 
@@ -109,5 +116,32 @@ class AdBanner extends StatelessWidget {
     return Container(
       child: Image.network(advertesPicture),
     );
+  }
+}
+
+// 拨号组件
+class LeaderPhone extends StatelessWidget {
+  final String leaderImage;
+  final String leaderPhone;
+
+  LeaderPhone({Key key, this.leaderImage,this.leaderPhone}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: InkWell(
+        onTap: _launchURL,
+        child: Image.network(leaderImage),
+      ),
+    );
+  }
+
+   void _launchURL() async {
+    String url = 'tel:'+leaderPhone;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw '报错了呀';
+    }
   }
 }
