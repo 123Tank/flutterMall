@@ -23,13 +23,15 @@ class _HomePageState extends State<HomePage> {
               List<Map> swiperDataList =
                   (data['data']['slides'] as List).cast(); // 顶部轮播组件数
               List<Map> navigatorList = (data['data']['category'] as List).cast(); // 导航组件
+              String  advertesPicture = (data['data']['advertesPicture']['PICTURE_ADDRESS']);
               if(navigatorList.length>10){
                 navigatorList.removeRange(10, navigatorList.length);
               }
               return Column(
                 children: <Widget>[
                   SwiperDiy(swiperDataList: swiperDataList),
-                   TopNavigator(navigatorList: navigatorList)
+                  TopNavigator(navigatorList: navigatorList),
+                  AdBanner(advertesPicture: advertesPicture),
                 ],
               );
             } else {
@@ -92,6 +94,20 @@ class TopNavigator extends StatelessWidget {
           return _gridViewItemUI(context, item);
         }).toList(),
       ),
+    );
+  }
+}
+
+
+class AdBanner extends StatelessWidget {
+  final String advertesPicture;
+
+  AdBanner({Key key, this.advertesPicture}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Image.network(advertesPicture),
     );
   }
 }
